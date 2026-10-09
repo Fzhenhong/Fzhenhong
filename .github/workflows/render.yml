@@ -67,7 +67,11 @@ jobs:
           git add assets
           git diff --staged --quiet && exit 0
           git commit -m "chore: refresh profile svg [skip ci]"
-          # 远端可能已被其他提交推进，先 rebase 再推
-          git pull --rebase --autostash origin main
+          # assets 是派生物，冲突时一律以本次渲染结果为准
+          git pull --rebase --autostash --strategy-option=ours origin main || {
+            git checkout --ours assets/ 2>/dev/null || true
+            git add assets
+            GIT_EDITOR=true git rebase --continue
+          }
           git push
 
