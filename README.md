@@ -14,6 +14,10 @@
 <img src="https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white" />
 <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" />
 
+<br/>
+
+<img src="https://visitor-badge.laobi.icu/badge?page_id=Fzhenhong.Fzhenhong&left_text=VISITORS&left_color=0B1220&right_color=38BDF8&style=for-the-badge" alt="visitors" />
+
 </div>
 
 <br/>
@@ -75,6 +79,10 @@ Harmony 运行期 IL 补丁 + 反射只读 + `SceneTree.ProcessFrame` 轮询，�
 
 <img height="180" src="https://github-readme-stats.vercel.app/api?username=Fzhenhong&show_icons=true&theme=tokyonight&hide_border=true&include_all_commits=true&count_private=true&bg_color=0B1220&title_color=38BDF8&icon_color=2E7D9A&text_color=C9D1D9&rank_icon=github" />
 <img height="180" src="https://streak-stats.demolab.com?user=Fzhenhong&theme=tokyonight&hide_border=true&background=0B1220&stroke=1B3A5C&ring=38BDF8&fire=FF7A45&currStreakLabel=38BDF8&dates=C9D1D9&sideNums=C9D1D9" />
+
+<br/><br/>
+
+<img width="96%" src="https://activity-graph.vercel.app/graph?username=Fzhenhong&bg_color=0B1220&color=38BDF8&line=2E7D9A&point=FF7A45&area=true&hide_border=true&custom_title=Contribution%20Timeline&title_color=38BDF8" />
 
 <br/><br/>
 
