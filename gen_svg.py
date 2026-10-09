@@ -170,6 +170,92 @@ def metrics(stats):
     s.append("</svg>")
     (OUT / "metrics.svg").write_text("".join(s), encoding="utf-8")
 
+
+# ─────────────────────────  5. Overview 总览  ─────────────────────────
+def overview(stats):
+    """2×2 指标面板，替代 readme-stats 卡片。"""
+    w, h = 900, 170
+    s = [head(w, h, "overview")]
+    s.append(f'<rect width="{w}" height="{h}" fill="{BG}"/>')
+    s.append(f'<rect x=".5" y=".5" width="{w-1}" height="{h-1}" rx="10" fill="{PANEL}" stroke="{BORDER}"/>')
+    s.append(f'<text x="30" y="30" font-size="12" fill="{MUTED}" letter-spacing="1.5">OVERVIEW</text>')
+    cw, rh = (w - 60) / 2, 46
+    for i, (k, v) in enumerate(list(stats.items())[:4]):
+        col, row = i % 2, i // 2
+        x = 30 + col * cw
+        y = 54 + row * rh
+        s.append(f'<text x="{x}" y="{y}" font-size="11" fill="{DIM}" letter-spacing="1.1">{esc(k)}</text>')
+        s.append(f'<text x="{x + cw - 20}" y="{y}" font-size="16" fill="{ACCENT}" '
+                 f'text-anchor="end" font-weight="700">{esc(v)}</text>')
+        s.append(f'<line x1="{x}" y1="{y+14}" x2="{x+cw-20:.0f}" y2="{y+14}" stroke="{BORDER}"/>')
+    s.append("</svg>")
+    (OUT / "overview.svg").write_text("".join(s), encoding="utf-8")
+
+# ─────────────────────────  6. Recent Activity 最近动态  ─────────────────────────
+def activity(events):
+    """提交时间轴 —— 数据来自 REST /users/:u/events。"""
+    rows = events[:5]
+    rh = 34
+    w = 900
+    h = int(52 + len(rows) * rh + 20)
+    s = [head(w, h, "recent activity")]
+    s.append(f'<rect width="{w}" height="{h}" fill="{BG}"/>')
+    s.append(f'<rect x=".5" y=".5" width="{w-1}" height="{h-1}" rx="10" fill="{PANEL}" stroke="{BORDER}"/>')
+    s.append(f'<text x="30" y="30" font-size="12" fill="{MUTED}" letter-spacing="1.5">RECENT ACTIVITY</text>')
+    if not rows:
+        s.append(f'<text x="30" y="70" font-size="13" fill="{DIM}">no public activity</text>')
+    for i, ev in enumerate(rows):
+        y = 56 + i * rh
+        kind = ev["kind"]
+        col = ACCENT if kind == "push" else (ACCENT2 if kind in ("pr", "issue") else MUTED)
+        s.append(f'<circle cx="34" cy="{y-4}" r="3.5" fill="{col}"/>')
+        if i < len(rows) - 1:
+            s.append(f'<line x1="34" y1="{y-4}" x2="34" y2="{y-4+rh}" stroke="{BORDER}"/>')
+        s.append(f'<text x="52" y="{y}" font-size="13" fill="{TEXT}">{esc(ev["repo"])}</text>')
+        s.append(f'<text x="52" y="{y+15}" font-size="11" fill="{DIM}">{esc(ev["desc"])}</text>')
+        s.append(f'<text x="{w-30}" y="{y}" font-size="11" fill="{DIM}" '
+                 f'text-anchor="end">{esc(ev["when"])}</text>')
+    s.append("</svg>")
+    (OUT / "activity.svg").write_text("".join(s), encoding="utf-8")
+
+# ─────────────────────────  7. Contribution Graph 打卡网格  ─────────────────────────
+def contrib_grid(cal):
+    """月度打卡网格 —— 每行一个月，格=天。"""
+    import calendar as _cal
+    days = [d for wk in cal["weeks"] for d in wk["contributionDays"]]
+    months = {}
+    for d in days:
+        months.setdefault(d["date"][:7], {})[int(d["date"][8:10])] = d["contributionCount"]
+    # 按月补零到自然月天数，保证每行格子数一致
+    grid = {}
+    for k, m in months.items():
+        y, mo = int(k[:4]), int(k[5:7])
+        ndays = _cal.monthrange(y, mo)[1]
+        grid[k] = [m.get(i, 0) for i in range(1, ndays + 1)]
+    keys = sorted(grid.keys())[-12:]
+    cw, gap, rh = 13, 4, 24
+    left, top = 92, 50
+    total_w = 31 * (cw + gap)          # 统一按 31 格占位，各行右缘对齐
+    w = int(left + total_w + 60)
+    h = int(top + len(keys) * rh + 22)
+    maxc = max((c for k in keys for c in grid[k]), default=1) or 1
+    s = [head(w, h, "contribution grid")]
+    s.append(f'<rect width="{w}" height="{h}" fill="{BG}"/>')
+    s.append(f'<rect x=".5" y=".5" width="{w-1}" height="{h-1}" rx="10" fill="{PANEL}" stroke="{BORDER}"/>')
+    s.append(f'<text x="30" y="28" font-size="12" fill="{MUTED}" letter-spacing="1.5">CONTRIBUTION GRID</text>')
+    for ri, k in enumerate(keys):
+        y = top + ri * rh
+        s.append(f'<text x="30" y="{y+10}" font-size="11" fill="{DIM}">{k}</text>')
+        for di, c in enumerate(grid[k]):
+            col, op = (GRID, "1") if c == 0 else (ACCENT, f"{0.25 + 0.75*(c/maxc):.2f}")
+            s.append(f'<rect x="{left + di*(cw+gap)}" y="{y}" width="{cw}" height="{cw}" '
+                     f'rx="2.5" fill="{col}" opacity="{op}"/>')
+        tot = sum(grid[k])
+        s.append(f'<text x="{left + total_w + 10}" y="{y+10}" font-size="11" '
+                 f'fill="{MUTED}" text-anchor="end">{tot}</text>')
+    s.append("</svg>")
+    (OUT / "grid.svg").write_text("".join(s), encoding="utf-8")
+
 if __name__ == "__main__":
     data = json.loads(pathlib.Path("gh_data.json").read_text(encoding="utf-8"))
     data["metrics"]["STREAK"] = compute_streak(data["calendar"])
@@ -177,4 +263,7 @@ if __name__ == "__main__":
     heatmap(data["calendar"], data["user"])
     stackbar(data["stack"])
     metrics(data["metrics"])
+    overview(data["overview"])
+    activity(data.get("events", []))
+    contrib_grid(data["calendar"])
     print("generated:", sorted(p.name for p in OUT.glob("*.svg")))

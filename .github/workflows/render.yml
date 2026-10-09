@@ -54,6 +54,7 @@ jobs:
                 }
               }
             }' > _gql.json
+          gh api "users/${GITHUB_REPOSITORY_OWNER}/events?per_page=30" > _events.json
           python prep_data.py
 
       - name: Render SVGs
@@ -69,3 +70,4 @@ jobs:
           # 远端可能已被其他提交推进，先 rebase 再推
           git pull --rebase --autostash origin main
           git push
+
