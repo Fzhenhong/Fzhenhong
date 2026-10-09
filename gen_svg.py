@@ -260,10 +260,10 @@ if __name__ == "__main__":
     data = json.loads(pathlib.Path("gh_data.json").read_text(encoding="utf-8"))
     data["metrics"]["STREAK"] = compute_streak(data["calendar"])
     terminal_header(data["user"], data["name"], data["tagline"])
-    heatmap(data["calendar"], data["user"])
     stackbar(data["stack"])
-    metrics(data["metrics"])
+    # 指标只保留 overview（与 metrics 同源，避免重复展示）
     overview(data["overview"])
     activity(data.get("events", []))
+    # 贡献图只保留按月网格（heatmap 与其同源，且 grid 信息量更大）
     contrib_grid(data["calendar"])
     print("generated:", sorted(p.name for p in OUT.glob("*.svg")))

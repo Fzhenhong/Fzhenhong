@@ -50,10 +50,6 @@
 
 <img src="https://raw.githubusercontent.com/Fzhenhong/Fzhenhong/main/assets/grid.svg" width="900" alt="contribution grid" />
 
-<br/>
-
-<img src="https://raw.githubusercontent.com/Fzhenhong/Fzhenhong/main/assets/heatmap.svg" width="900" alt="contributions" />
-
 </div>
 
 ---
@@ -91,9 +87,11 @@
 
 ---
 
+<div align="center">
+
 <img src="https://raw.githubusercontent.com/Fzhenhong/Fzhenhong/main/assets/stack.svg" width="900" alt="stack" />
 
-<img src="https://raw.githubusercontent.com/Fzhenhong/Fzhenhong/main/assets/metrics.svg" width="900" alt="metrics" />
+</div>
 
 ---
 
