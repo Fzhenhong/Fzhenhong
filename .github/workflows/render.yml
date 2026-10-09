@@ -1,0 +1,63 @@
+name: Render Profile
+
+# 自绘 SVG：不依赖任何第三方公共实例（那些服务正在集体收费/停服）
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - "gen_svg.py"
+      - ".github/workflows/render.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fetch GitHub data
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api graphql -f query='
+            query {
+              user(login: "'"${{ github.repository_owner }}"'") {
+                name
+                contributionsCollection {
+                  totalCommitContributions
+                  contributionCalendar {
+                    totalContributions
+                    weeks { contributionDays { contributionCount date } }
+                  }
+                }
+                repositories(first: 100, ownerAffiliations: OWNER, isFork: false, privacy: PUBLIC) {
+                  nodes {
+                    name
+                    languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
+                      edges { size node { name } }
+                    }
+                  }
+                }
+              }
+            }' > _gql.json
+          python prep_data.py
+
+      - name: Render SVGs
+        run: python gen_svg.py
+
+      - name: Commit
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets stack.svg 2>/dev/null || git add assets
+          git diff --staged --quiet || git commit -m "chore: refresh profile svg [skip ci]"
+          git push
