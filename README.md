@@ -78,10 +78,6 @@ Harmony 运行期 IL 补丁 + 反射只读 + `SceneTree.ProcessFrame` 轮询，�
 
 <br/><br/>
 
-<img width="96%" src="https://github-readme-activity-graph.vercel.app/graph?username=Fzhenhong&bg_color=0B1220&color=38BDF8&line=2E7D9A&point=FF7A45&area=true&hide_border=true&custom_title=Contribution%20Timeline" />
-
-<br/><br/>
-
 <img width="58%" src="https://github-readme-stats.vercel.app/api/top-langs/?username=Fzhenhong&layout=compact&theme=tokyonight&hide_border=true&bg_color=0B1220&title_color=38BDF8&text_color=C9D1D9&langs_count=8" />
 
 </div>
